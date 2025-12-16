@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text-maroon {
+  color: #800000;
+}
+
+
+.ql-size-extra-small { font-size: 0.75em; }
+.ql-size-extra-large { font-size: 2em; }

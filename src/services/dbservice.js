@@ -5,7 +5,9 @@ const localapp = "http://localhost:5137/api";
 const BASE_URL_LocalHost = "http://localhost:8081/api";
 const BASE_URL_Production = "https://api.jyothidental.com/api";
 
- const BASE_URL =  `${BASE_URL_Production}/blog`;
+const apiURL = process.env.NODE_ENV === 'production' ? BASE_URL_Production : localapp;
+//const apiURL =BASE_URL_Production
+ const BASE_URL =  `${apiURL}/blog`;
 
 
 export const createBlog = async (data) => {
@@ -27,8 +29,9 @@ export const deleteBlogImage = async (fileName) => {
 };
 
 export const uploadBlogImage = async (formData) => {
-  return await axios.post(`${BASE_URL}/upload`, formData, {
+  return await axios.post(`${BASE_URL}/upload`, formData,{
     headers: { "Content-Type": "multipart/form-data" },
+   
   });
 };
 
@@ -42,7 +45,7 @@ export const getProcedureBlog = async (id) => {
   return await axios.get(`${BASE_URL}/ProcedureBlog/${id}`);
 };
 // prodcedure specific methods
-const PROCEDURE_URL =  `${BASE_URL_Production}/procedure`; //"http://localhost:5137/api/procedure";  
+const PROCEDURE_URL =  `${apiURL}/procedure`; //"http://localhost:5137/api/procedure";  
 
 
                 // Get all procedures
@@ -73,4 +76,15 @@ const PROCEDURE_URL =  `${BASE_URL_Production}/procedure`; //"http://localhost:5
         // Delete a procedure
         export const deleteProcedure = async (id) => {
         return await axios.delete(`${PROCEDURE_URL}/${id}`);
+        };
+// prodcedure specific methods
+const Email_URL =  `${apiURL}/Email`; //"http://localhost:5137/api/Email/";  
+
+
+                // send Email
+         export const sendEmail = async (data) => { 
+         return await axios.post(`${Email_URL}/send`, data, {
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
         };

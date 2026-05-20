@@ -79,12 +79,12 @@ const Header = () => {
           {/* Header Top Row - Logo and Menu Button */}
           <div className="py-3 flex justify-between items-center">
             {/* Logo and Title */}
-            <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/" className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition">
               <img src="../logo.png" alt="Jyothi Dental Clinic" className="max-h-16 sm:max-h-20 w-auto" />
               <h1 className="text-[#5B1A13] font-serif text-lg sm:text-2xl font-extrabold uppercase tracking-wider hidden sm:block drop-shadow">
                 Jyothi Dental Clinic
               </h1>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex flex-wrap justify-end gap-2 lg:gap-4">

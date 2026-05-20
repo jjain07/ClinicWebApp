@@ -38,7 +38,17 @@ const Footer = () => {
 
         <div className="border-t border-[#b8860b] pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-center md:text-left">
-            <p>&copy; {currentYear} Jyothi Dental Clinic. All rights reserved.</p>
+            <p>
+              &copy; {currentYear} Jyothi Dental Clinic. All rights reserved.
+              {/* Admin access — intentionally low-visibility */}
+              <a
+                href="/admin"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="ml-2 text-[#5B1A13] hover:text-[#5B1A13] select-none"
+                title=""
+              >·</a>
+            </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <a href="#" className="hover:text-[#b8860b] transition">Privacy Policy</a>
               <a href="#" className="hover:text-[#b8860b] transition">Terms of Service</a>

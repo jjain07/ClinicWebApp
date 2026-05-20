@@ -55,9 +55,9 @@ const Contact = () => {
         // Send email using sendEmail from dbservice
         const response = await sendEmail({
           name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.description
+          emailid: formData.email,
+          contactno: formData.phone,
+          description: formData.description
         });
         
         if (response.status === 200 || response.status === 201) {
@@ -155,7 +155,7 @@ const Contact = () => {
                   onChange={handleChange}
                   placeholder="Enter your email address"
                   className={`w-full px-4 py-2 sm:py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8860b] transition text-sm sm:text-base ${
-                    errors.email ? 'border-red-500' : 'border-[#b8860b]'
+                    errors.emailid ? 'border-red-500' : 'border-[#b8860b]'
                   }`}
                 />
                 {errors.email && (

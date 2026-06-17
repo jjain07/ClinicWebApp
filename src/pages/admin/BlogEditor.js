@@ -14,6 +14,24 @@ import {
 const BlogEditor = () => {
     const quillRef = useRef();
       const prevImagesRef = useRef([]); // Track previous images
+ const selectedRef = useRef(null); // Add this ref
+
+       const [editorContent, setEditorContent] = useState(""); // stores editor content
+  const [htmlContent, setHtmlContent] = useState(""); // stores generated HTML
+  const [title, setTitle] = useState(""); // Add title state
+
+  const [procedures, setProcedures] = useState([]);
+    const [blogs, setBlogs] = useState([]);
+    const [blog, setBlog] = useState(null);
+
+    const [selected, setSelected] = useState(null);
+    const [selectedProcedureId, setSelectedProcedureId] = useState(""); // For dropdown
+
+      const [isOpen, setIsOpen] = useState(false);
+
+     const [treeData, setTreeData] = useState([]);
+  
+
 
   // const [title, setTitle] = useState("");
   // const [subtitle, setSubtitle] = useState("");
@@ -29,13 +47,13 @@ const BlogEditor = () => {
       const file = input.files[0];
       const formData = new FormData();
       formData.append("file", file);
-
+  formData.append("procedureId", selectedRef.current);
         // const res = await axios.post("http://localhost:5137/api/blog/upload", formData, {
         //   headers: { "Content-Type": "multipart/form-data" }
         // });
- 
+      
       const res = await uploadBlogImage(formData);
-
+ console.log("Image upload response:",selectedRef.current);
         const url = res.data.url;
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
@@ -86,52 +104,49 @@ const handleVideoInsert = () => {
   //   // });
   //   alert("Procedure saved!");
   // };
- const [editorContent, setEditorContent] = useState(""); // stores editor content
-  const [htmlContent, setHtmlContent] = useState(""); // stores generated HTML
-  const [title, setTitle] = useState(""); // Add title state
-
-  const [procedures, setProcedures] = useState([]);
-    const [blogs, setBlogs] = useState([]);
-    const [blog, setBlog] = useState(null);
-
-    const [selected, setSelected] = useState(null);
-    const [selectedProcedureId, setSelectedProcedureId] = useState(""); // For dropdown
-
-      const [isOpen, setIsOpen] = useState(false);
-
-     const [treeData, setTreeData] = useState([]);
-  
 
     useEffect(() => {
       async function fetchProcedures() {
         try {
-          const resBlogs = await getAllBlogs();
+          
             const res = await getAllProcedures();
                      
           setProcedures(res.data);
-          setBlogs(resBlogs.data);
+        
           setTreeData(convertToTree(res.data));
           console.log("Fetched procedures:", res.data);
-                    console.log("Fetched Blogs:", resBlogs.data);
+                      selectedRef.current = selected;
 
-          if (resBlogs.data.length > 0) setSelected(resBlogs.data[0].key || resBlogs.data[0].id);
-          setEditorContent(resBlogs.data[0].htmlContent || ""); // Quill's internal format
-          setHtmlContent(resBlogs.data[0].htmlContent || ""); // Actual HTML string
-                    setTitle(resBlogs.data[0].title || ""); // Set title from first blog
-          //setSelectedProcedureId(res.data[0].id || ""); // Set default ProcedureId
 
-            console.log(resBlogs.data[0].htmlContent);
+        
         } catch (err) {
           console.error("Failed to fetch procedures:", err);
         }
       }
       fetchProcedures();
-    }, []);
+    }, [selected]);
+
+    async function fetchBlogs  (id) {
+//const resBlogs = await getAllBlogs();
+
+ setSelectedProcedureId(id);
+const resBlogs =await getProcedureBlog(id);
+ setBlog(resBlogs);
+     console.log("Fetched Blogs:", resBlogs);
+       if (resBlogs.data.length > 0){
+          setEditorContent(resBlogs.data.htmlContent || ""); // Quill's internal format
+          setHtmlContent(resBlogs.data.htmlContent || ""); // Actual HTML string
+                    setTitle(resBlogs.data.title || ""); // Set title from first blog
+          //setSelectedProcedureId(res.data[0].id || ""); // Set default ProcedureId
+
+            //console.log(resBlogs.data.htmlContent);
+       }
+    }
       
      // const treeData = useMemo(() => convertToTree(procedures), []);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  console.log('tree', treeData);
+ // console.log('tree', treeData);
 
     // const selectedBlog = blogs.find(
       
@@ -154,7 +169,7 @@ const handleVideoInsert = () => {
      // Get previous images from ref
     const oldImages = prevImagesRef.current;
       console.log(oldImages);
-
+debugger
      // Detect deleted images
     const deleted = oldImages.filter((img) => !newImages.includes(img));
     for (const imgUrl of deleted) {
@@ -169,14 +184,15 @@ const handleVideoInsert = () => {
     setHtmlContent(editor.getHTML()); // Actual HTML string
   };
     const handleSave = async () => {
-      if(blog){
+      console.log("Saving blog with:", selected);
+      if(blog.data|| blog.data!=""){
          // Update existing blog
-         alert("update",selected);
-
-        await putUpdateBlog(blog.id, {id:blog.id, title, htmlContent, ProcedureId: selectedProcedureId||0 });
+         alert("update",blog.id);
+ console.log('blog to update', {id:blog.data.id, title, htmlContent, ProcedureId: selected||0 });
+        await putUpdateBlog(blog.data.id, {id:blog.data.id, title, htmlContent, ProcedureId: selected  });
       } else {
         // Create new blog
-        await createBlog({ title, htmlContent, ProcedureId: selectedProcedureId });
+        await createBlog({ title, htmlContent, ProcedureId: selected });
       }
 
    
@@ -185,21 +201,21 @@ const handleVideoInsert = () => {
 const getSelectedBlog = async (item) => {
   try {
     setSelected(item.id);
-    
+      console.log('selected Prodedure', item.id);
     // Fetch the blog data
     const res = await getProcedureBlog(item.id);
-    const blog = res.data;
+    const blog = res;
     console.log('selected blog', blog);
     if (!blog || blog.id === 0) {
-      setEditorContent("");
+      setEditorContent("test");
       setHtmlContent("");
       setTitle("");
       setSelectedProcedureId("");
     } else {
-      setEditorContent(blog.htmlContent || "");
-      setHtmlContent(blog.htmlContent || "");
-      setTitle(blog.title || "");
-      setSelectedProcedureId(blog.procedureId || "");
+      setEditorContent(blog.data.htmlContent || "");
+      setHtmlContent(blog.data.htmlContent || "");
+      setTitle(blog.data.title || "");
+      setSelectedProcedureId(blog.data.procedureId || "");
       setBlog(blog);
     }
   } catch (err) {

@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import HeaderTopBar from './component/HeaderTopBar';
 import Header from './component/Header';
 import Footer from './component/Footer';
@@ -12,12 +13,17 @@ import Contact from './pages/Contact';
  
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import HeroSection from './component/HeroSection';
-import Procedures from './pages/procedures';
+import Procedures from './pages/ProceduresNew';
 import AddProcedure from './pages/admin/procedure';
 import BlogEditorCopy from './pages/admin/BlogEditorCopy';
-import BlogEditor  from './pages/admin/BlogEditor';
+import BlogEditor  from './pages/admin/BlogEditorFixed';
+import Gallery from './pages/Gallery';
+import AdminGallery from './pages/admin/Gallery';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminGate from './pages/admin/AdminGate';
 function App() {
   return (
+    <HelmetProvider> 
     <div className="App">
       <Router>
   
@@ -34,6 +40,9 @@ function App() {
              <Route path="/contact" element={<Contact />} />
                <Route path="/admin/procedure" element={<AddProcedure />} />
                               <Route path="/admin/blogeditor" element={<BlogEditor />} />
+             <Route path="/gallery" element={<Gallery />} />
+             <Route path="/admin/gallery" element={<AdminGallery />} />
+             <Route path="/admin" element={<AdminGate />} />
 
              {/* <Route path="/gallery" element={<Gallery />} />
             <Route path="/faq" element={<FAQ />} /> */}
@@ -44,6 +53,7 @@ function App() {
     </Router>
 
     </div>
+    </HelmetProvider>
   );
     }
 

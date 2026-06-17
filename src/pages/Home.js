@@ -1,13 +1,29 @@
+import { Helmet } from 'react-helmet-async';
 const Home = () => {
   return (
+    <>
+    <Helmet>
+        <title>Jyothi Dental Clinic - Expert Facial Surgery & Dental Care</title>
+        <meta name="description" content="Jyothi Dental Clinic offers world-class dental care including dental implants, jaw surgery, and clear aligners with state-of-the-art technology." />
+        <meta name="keywords" content="dental clinic, dental implants, jaw surgery, clear aligners, facial surgery, dental care" />
+        <meta name="author" content="Jyothi Dental Clinic" />
+        <meta property="og:title" content="Jyothi Dental Clinic - Expert Facial Surgery & Dental Care" />
+        <meta property="og:description" content="Transform your smile with our expert dental professionals. Dental implants, jaw surgery, and clear aligners." />
+        <meta property="og:type" content="website" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://jyothidental.com/" />
+      </Helmet>
+
     <div className="bg-gradient-to-b from-[#FDF3C4] to-[#fff8f0] min-h-screen">
       <div className="h-20 md:h-40" />
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-12 md:mb-16">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#800000] mb-3 md:mb-4 leading-tight">
-            Welcome to <span className="text-[#b8860b]">Jyothi Dental Clinic</span>
+            Welcome to <span className="text-[#b8860b]">Jyothi Dental Clinic </span>- Expert Facial Surgery & Dental Care
           </h1>
+          
           <p className="text-lg sm:text-xl md:text-2xl text-[#5B1A13] font-semibold mb-2">
             Facial Surgery Speciality Clinic
           </p>
@@ -73,6 +89,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { sendEmail } from '../services/dbservice';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Contact = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,25 +44,43 @@ const Contact = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const newErrors = validateForm();
     
     if (Object.keys(newErrors).length === 0) {
-      // Form is valid, show success message
-      setSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        description: ''
-      });
+      try {
+        setLoading(true);
+        // Send email using sendEmail from dbservice
+        const response = await sendEmail({
+          name: formData.name,
+          emailid: formData.email,
+          contactno: formData.phone,
+          description: formData.description
+        });
+        
+        if (response.status === 200 || response.status === 201) {
+          // Email sent successfully
+          setSubmitted(true);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            description: ''
+          });
 
-      // Reset message after 5 seconds
-      setTimeout(() => {
-        setSubmitted(false);
-      }, 5000);
+          // Reset message after 5 seconds
+          setTimeout(() => {
+            setSubmitted(false);
+          }, 5000);
+        }
+      } catch (error) {
+        console.error('Error sending email:', error);
+        setErrors({ submit: 'Failed to send message. Please try again.' });
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrors(newErrors);
     }
@@ -76,6 +96,13 @@ const Contact = () => {
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#800000] mb-3 md:mb-4">
             Get in <span className="text-[#b8860b]">Touch</span>
           </h1>
+
+            {errors.submit && (
+              <div className="mb-6 p-4 bg-red-100 border border-red-400 rounded-lg">
+                <p className="text-red-800 font-semibold">✗ Error</p>
+                <p className="text-red-700 text-sm mt-1">{errors.submit}</p>
+              </div>
+            )}
           <div className="h-1 w-16 sm:w-20 md:w-24 bg-[#b8860b] mx-auto mb-6"></div>
           <p className="text-base sm:text-lg text-[#5B1A13] max-w-2xl mx-auto px-2">
             Have questions? We'd love to hear from you. Send us a message and we'll respond shortly.
@@ -128,7 +155,7 @@ const Contact = () => {
                   onChange={handleChange}
                   placeholder="Enter your email address"
                   className={`w-full px-4 py-2 sm:py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8860b] transition text-sm sm:text-base ${
-                    errors.email ? 'border-red-500' : 'border-[#b8860b]'
+                    errors.emailid ? 'border-red-500' : 'border-[#b8860b]'
                   }`}
                 />
                 {errors.email && (
@@ -169,9 +196,10 @@ const Contact = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#800000] hover:bg-[#b8860b] text-white font-bold py-2 sm:py-3 px-6 rounded-lg transition duration-300 shadow-md text-sm sm:text-base mt-6"
+                disabled={loading}
+                className="w-full bg-[#800000] hover:bg-[#b8860b] disabled:bg-gray-400 text-white font-bold py-2 sm:py-3 px-6 rounded-lg transition duration-300 shadow-md text-sm sm:text-base mt-6"
               >
-                Send Message
+                {loading ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
